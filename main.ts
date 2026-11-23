@@ -1,24 +1,15 @@
-#!/usr/bin/env node
-import { mkdirSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { join } from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const OUTPUT_DIR = process.env.MAKEFUN_OUTPUT_DIR || '/output';
+const ENTRY_FILE = join(OUTPUT_DIR, 'entry.txt');
+const LINE = 'I finally got eight hours of sleep, all of it in meetings I led.';
 
-const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
-mkdirSync(outputDir, { recursive: true });
-
-const entry = "I only meal prep anxiety.";
-if (entry.length > 200) {
-  throw new Error(`Entry exceeds 200 characters: ${entry.length}`);
-}
-if (!entry.trim()) {
-  throw new Error("Entry is blank");
-}
-if (!entry.endsWith(".")) {
-  throw new Error("Entry must end with a period (one sentence)");
+if (!LINE.trim() || LINE.length > 200) {
+  throw new Error('Invalid line: must be non-blank and ≤200 chars');
 }
 
-writeFileSync(`${outputDir}/entry.txt`, entry, "utf8");
-console.log(`Wrote entry (${entry.length} chars) to ${outputDir}/entry.txt`);
+if (!existsSync(OUTPUT_DIR)) mkdirSync(OUTPUT_DIR, { recursive: true });
+
+writeFileSync(ENTRY_FILE, LINE);
+console.log(`Wrote entry to ${ENTRY_FILE} (${LINE.length} chars)`);
