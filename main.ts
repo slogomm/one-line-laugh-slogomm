@@ -1,17 +1,13 @@
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
-import { join } from 'path';
+import { mkdirSync, writeFileSync } from "node:fs";
 
-const OUTPUT_DIR = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
-const ENTRY_FILE = join(OUTPUT_DIR, 'entry.txt');
-const LINE = "My phone's on silent so I can ignore the one person I'm waiting to hear from.";
+const outputDir = process.env.MAKEFUN_OUTPUT_DIR || "/output";
+const entryPath = `${outputDir}/entry.txt`;
+const line = "I go to bed early so I can lie awake in comfort.";
 
-if (!LINE.trim() || LINE.length > 200) {
-  throw new Error('Invalid line: must be non-blank and ≤200 chars');
-}
+if (!line.trim()) throw new Error("Entry must not be blank");
+if (line.length > 200) throw new Error(`Entry exceeds 200 characters (${line.length})`);
 
-if (!existsSync(OUTPUT_DIR)) {
-  mkdirSync(OUTPUT_DIR, { recursive: true });
-}
+mkdirSync(outputDir, { recursive: true });
+writeFileSync(entryPath, line);
 
-writeFileSync(ENTRY_FILE, LINE);
-console.log(`Wrote entry to ${ENTRY_FILE} (${LINE.length} chars)`);
+console.log(`Wrote entry.txt (${line.length} chars) to ${entryPath}`);
